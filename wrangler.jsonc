@@ -1,0 +1,49 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "image-2-studio-worker",
+  "main": "src/cloudflare/worker.js",
+  "compatibility_date": "2026-05-09",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS"
+  },
+  "r2_buckets": [
+    {
+      "binding": "IMAGE_OUTPUTS",
+      "bucket_name": "image-2-studio-worker-outputs","preview_bucket_name": "image-2-studio-worker-outputs"
+    }
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "RUN_STATE",
+        "class_name": "RunState"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["RunState"]
+    }
+  ],
+  "queues": {
+    "producers": [
+      {
+        "binding": "IMAGE_JOBS",
+        "queue": "image-2-studio-worker-jobs"
+      }
+    ],
+    "consumers": [
+      {
+        "queue": "image-2-studio-worker-jobs",
+        "max_batch_size": 1,
+        "max_batch_timeout": 30,
+        "max_retries": 3
+      }
+    ]
+  },
+  "observability": {
+    "enabled": true
+  }
+}

@@ -1,0 +1,3 @@
+# One prompt per line. Empty lines and comments are ignored.
+cinematic neon skyline after rain, high detail
+minimal product photo of a glass teapot on white background

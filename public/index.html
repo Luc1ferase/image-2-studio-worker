@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Image-2 Studio</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <section id="auth-gate" class="auth-gate" hidden>
+      <form id="auth-form" class="auth-panel">
+        <div class="brand-mark">I2</div>
+        <div>
+          <h1 id="auth-title" data-i18n="authSetupTitle">设置管理员密码</h1>
+          <p id="auth-description" data-i18n="authSetupDescription">首次访问需要创建管理员密码，长度为 8 到 20 个字符。</p>
+        </div>
+        <label>
+          <span data-i18n="authPassword">密码</span>
+          <input id="auth-password" type="password" autocomplete="current-password" minlength="8" maxlength="20" />
+        </label>
+        <label id="auth-confirm-row">
+          <span data-i18n="authConfirmPassword">确认密码</span>
+          <input id="auth-confirm-password" type="password" autocomplete="new-password" minlength="8" maxlength="20" />
+        </label>
+        <button id="auth-submit" class="primary-button" type="submit" data-i18n="authSetupButton">设置并进入</button>
+        <p id="auth-message" class="auth-message" role="status"></p>
+      </form>
+    </section>
+
+    <main class="app-shell" hidden>
+      <section class="sidebar" aria-label="生成设置" data-i18n-aria-label="generationSettings">
+        <div class="brand-block">
+          <div class="brand-mark">I2</div>
+          <div class="brand-copy">
+            <h1>Image-2 Studio</h1>
+            <p data-i18n="workspaceSubtitle">本地图片生成工作台</p>
+          </div>
+          <button
+            id="settings-toggle"
+            class="sidebar-toggle"
+            type="button"
+            aria-controls="settings-form"
+            aria-expanded="true"
+            title="折叠设置"
+            data-i18n-title="collapseSettings"
+          >
+            <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+              <path d="M15 6l-6 6 6 6" />
+            </svg>
+            <span id="settings-toggle-label" class="visually-hidden">折叠设置</span>
+          </button>
+        </div>
+
+        <form id="settings-form" class="settings-form">
+          <label>
+            <span data-i18n="apiKey">API Key</span>
+            <input
+              id="api-key"
+              name="apiKey"
+              type="password"
+              autocomplete="off"
+              placeholder="留空则从 .env 读取"
+              data-i18n-placeholder="apiKeyPlaceholder"
+            />
+          </label>
+
+          <label>
+            <span data-i18n="baseUrl">Base URL</span>
+            <input
+              id="base-url"
+              name="baseUrl"
+              type="url"
+              placeholder="例如：https://api.example.com"
+              data-i18n-placeholder="baseUrlPlaceholder"
+            />
+          </label>
+
+          <div class="field-grid">
+            <label>
+              <span data-i18n="language">语言</span>
+              <select id="language" name="language">
+                <option value="zh" selected>中文</option>
+                <option value="en">English</option>
+              </select>
+            </label>
+            <label>
+              <span data-i18n="theme">主题</span>
+              <select id="theme" name="theme">
+                <option value="light" selected data-i18n="themeLight">浅色</option>
+                <option value="dark" data-i18n="themeDark">深色</option>
+              </select>
+            </label>
+          </div>
+
+          <label>
+            <span data-i18n="endpoint">Endpoint</span>
+            <select id="endpoint-path" name="endpointPath">
+              <option value="/images/generations">/images/generations</option>
+              <option value="/v1/images/generations">/v1/images/generations</option>
+            </select>
+          </label>
+
+          <div class="field-grid">
+            <label>
+              <span data-i18n="model">模型</span>
+              <input id="model" name="model" value="gpt-image-2" />
+            </label>
+            <label>
+              <span data-i18n="size">尺寸</span>
+              <select id="size" name="size">
+                <option value="1024x1024">1024x1024 - 1:1</option>
+                <option value="1536x1024">1536x1024 - 3:2</option>
+                <option value="1024x1536">1024x1536 - 2:3</option>
+                <option value="2048x2048">2048x2048 - 2K 方图 / 1:1</option>
+                <option value="2048x1152">2048x1152 - 2K / 16:9</option>
+                <option value="2560x1440">2560x1440 - 2K QHD / 16:9</option>
+                <option value="3840x2160">3840x2160 - 4K UHD / 16:9</option>
+                <option value="2160x3840">2160x3840 - 4K 竖屏 / 9:16</option>
+                <option value="auto">auto - provider default</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="field-grid">
+            <label>
+              <span data-i18n="count">数量</span>
+              <input id="count" name="count" type="number" min="1" max="20" value="1" />
+            </label>
+            <label>
+              <span data-i18n="threads">线程</span>
+              <input id="concurrency" name="concurrency" type="number" min="1" max="12" value="2" />
+            </label>
+          </div>
+
+          <label>
+            <span data-i18n="timeout">超时</span>
+            <input id="timeout-minutes" name="timeoutMinutes" type="number" min="1" max="60" value="15" />
+          </label>
+
+          <div class="field-grid">
+            <label>
+              <span data-i18n="quality">质量</span>
+              <select id="quality" name="quality">
+                <option value="">auto</option>
+                <option value="low">low</option>
+                <option value="medium">medium</option>
+                <option value="high">high</option>
+              </select>
+            </label>
+            <label>
+              <span data-i18n="format">格式</span>
+              <select id="output-format" name="outputFormat">
+                <option value="">auto</option>
+                <option value="png">png</option>
+                <option value="jpeg">jpeg</option>
+                <option value="webp">webp</option>
+              </select>
+            </label>
+          </div>
+
+          <label class="legacy-response-field">
+            <span data-i18n="legacyResponse">旧版响应</span>
+            <select id="response-format" name="responseFormat">
+              <option value="">model default</option>
+              <option value="b64_json">b64_json</option>
+              <option value="url">url</option>
+            </select>
+          </label>
+
+          <label class="checkbox-row">
+            <input id="dry-run" name="dryRun" type="checkbox" />
+            <span data-i18n="dryRun">模拟运行</span>
+          </label>
+        </form>
+      </section>
+
+      <section class="workspace">
+        <header class="workspace-header">
+          <div>
+            <h2 data-i18n="promptQueue">提示词队列</h2>
+            <p id="defaults-note">就绪</p>
+          </div>
+          <button id="generate-button" class="primary-button" type="button">生成</button>
+        </header>
+
+        <label class="prompt-field">
+          <span data-i18n="prompts">提示词</span>
+          <textarea id="prompts" spellcheck="true">cinematic neon skyline after rain, high detail</textarea>
+        </label>
+        <label class="checkbox-row prompt-mode-row">
+          <input id="batch-prompts" name="batchPrompts" type="checkbox" />
+          <span data-i18n="batchLines">批量按行</span>
+        </label>
+
+        <div class="progress-panel">
+          <div class="progress-header">
+            <span id="run-title">无活动会话</span>
+            <span id="run-summary">0 / 0</span>
+          </div>
+          <div class="progress-track" aria-hidden="true">
+            <div id="progress-bar" class="progress-bar"></div>
+          </div>
+        </div>
+
+        <section class="results-section">
+          <div class="section-title">
+            <h2 data-i18n="results">结果</h2>
+            <p id="run-dir">图片生成后会显示在这里。</p>
+          </div>
+          <div id="result-toolbar" class="result-toolbar" hidden>
+            <div class="result-toolbar__selection">
+              <label class="result-select-all">
+                <input id="result-select-all-images" type="checkbox" />
+                <span data-i18n="selectAllImages">全选图片</span>
+              </label>
+              <span id="result-selection-count">已选择 0 项</span>
+            </div>
+            <div class="result-toolbar__actions">
+              <button id="download-selected-images" class="secondary-button" type="button" disabled data-i18n="download">下载</button>
+              <button id="delete-selected-images" class="danger-button" type="button" disabled data-i18n="delete">删除</button>
+            </div>
+          </div>
+          <div id="results-grid" class="results-grid"></div>
+        </section>
+      </section>
+
+      <aside class="right-rail" aria-label="会话导航" data-i18n-aria-label="sessionNavigation">
+        <nav class="right-rail__nav" aria-label="面板" data-i18n-aria-label="panels">
+          <button
+            id="right-rail-toggle"
+            class="rail-button rail-button--toggle"
+            type="button"
+            aria-controls="history-panel activity-panel"
+            aria-expanded="true"
+            title="折叠右侧栏"
+            data-i18n-title="collapseRightRail"
+          >
+            <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+              <path d="M9 6l6 6-6 6" />
+            </svg>
+            <span id="right-rail-toggle-label" class="visually-hidden">折叠右侧栏</span>
+          </button>
+          <button
+            class="rail-button"
+            type="button"
+            data-panel="history"
+            aria-controls="history-panel"
+            aria-pressed="false"
+            title="历史"
+            data-i18n-title="history"
+          >
+            <svg
+              class="rail-button__icon rail-button__icon--history"
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              focusable="false"
+            >
+              <path d="M3 12a9 9 0 1 0 3-6.7" />
+              <path d="M3 5v5h5" />
+              <path d="M12 8v5l3 2" />
+            </svg>
+            <span class="visually-hidden" data-i18n="history">历史</span>
+          </button>
+          <button
+            class="rail-button is-active"
+            type="button"
+            data-panel="activity"
+            aria-controls="activity-panel"
+            aria-pressed="true"
+            title="活动"
+            data-i18n-title="activity"
+          >
+            <svg class="rail-button__icon" aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+              <path d="M5 19V9M12 19V5M19 19v-7" />
+            </svg>
+            <span class="visually-hidden" data-i18n="activity">活动</span>
+          </button>
+        </nav>
+
+        <section id="history-panel" class="rail-panel rail-panel--history" data-panel-content="history" hidden>
+          <div class="section-title rail-panel__title">
+            <div>
+              <h2 data-i18n="history">历史</h2>
+              <p data-i18n="historySubtitle">已保存的会话。</p>
+            </div>
+            <div class="rail-panel__actions">
+              <button id="new-session-button" class="secondary-button" type="button" data-i18n="newSession">新建</button>
+              <button
+                id="edit-history-button"
+                class="secondary-button"
+                type="button"
+                aria-pressed="false"
+              >
+                编辑
+              </button>
+            </div>
+          </div>
+          <div class="history-toolbar" hidden>
+            <label class="select-all-row">
+              <input id="select-all-runs" type="checkbox" />
+              <span data-i18n="selectAll">全选</span>
+            </label>
+            <span id="history-selection-count">已选择 0 项</span>
+            <button id="delete-selected-runs" class="danger-button" type="button" disabled>删除所选</button>
+          </div>
+          <div id="run-history" class="run-history" aria-live="polite"></div>
+        </section>
+
+        <section
+          id="activity-panel"
+          class="rail-panel rail-panel--activity is-active"
+          data-panel-content="activity"
+        >
+          <div class="section-title rail-panel__title">
+            <div>
+              <h2 data-i18n="activity">活动</h2>
+              <p data-i18n="activitySubtitle">排队中的图片请求。</p>
+            </div>
+          </div>
+          <div id="job-list" class="job-list" aria-live="polite"></div>
+        </section>
+      </aside>
+
+      <div id="image-viewer" class="image-viewer" role="dialog" aria-modal="true" aria-label="图片查看器" data-i18n-aria-label="imageViewer" hidden>
+        <div class="image-viewer__bar">
+          <button id="viewer-close" class="secondary-button" type="button" data-i18n="close">关闭</button>
+          <div class="image-viewer__controls">
+            <button id="viewer-prev" class="icon-button" type="button" title="上一张图片" aria-label="上一张图片" data-i18n-title="previousImage" data-i18n-aria-label="previousImage">
+              <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><path d="M15 6l-6 6 6 6" /></svg>
+            </button>
+            <button id="viewer-zoom-out" class="icon-button" type="button" title="缩小" aria-label="缩小" data-i18n-title="zoomOut" data-i18n-aria-label="zoomOut">
+              <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><path d="M5 12h14" /></svg>
+            </button>
+            <button id="viewer-reset" class="secondary-button" type="button">100%</button>
+            <button id="viewer-zoom-in" class="icon-button" type="button" title="放大" aria-label="放大" data-i18n-title="zoomIn" data-i18n-aria-label="zoomIn">
+              <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><path d="M12 5v14M5 12h14" /></svg>
+            </button>
+            <button id="viewer-next" class="icon-button" type="button" title="下一张图片" aria-label="下一张图片" data-i18n-title="nextImage" data-i18n-aria-label="nextImage">
+              <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><path d="M9 6l6 6-6 6" /></svg>
+            </button>
+          </div>
+        </div>
+        <div class="image-viewer__stage">
+          <img id="viewer-image" class="image-viewer__image" alt="" />
+        </div>
+        <div class="image-viewer__caption" id="viewer-caption"></div>
+      </div>
+
+      <div id="confirm-dialog" class="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="confirm-title" hidden>
+        <div class="confirm-dialog__panel">
+          <h2 id="confirm-title" data-i18n="deleteSelectedImagesTitle">删除所选图片？</h2>
+          <p id="confirm-message">删除所选图片文件。</p>
+          <div class="confirm-dialog__actions">
+            <button id="cancel-delete-images" class="secondary-button" type="button" data-i18n="cancel">取消</button>
+            <button id="confirm-delete-images" class="danger-button" type="button" data-i18n="delete">删除</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>

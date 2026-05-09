@@ -1,0 +1,37 @@
+{
+  "name": "image-2-studio-worker",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Local browser GUI for generating images through sub2api and OpenAI-compatible image endpoints.",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Luc1ferase/Image-2-Studio-cloudflare.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Luc1ferase/Image-2-Studio-cloudflare/issues"
+  },
+  "homepage": "https://github.com/Luc1ferase/Image-2-Studio-cloudflare#readme",
+  "keywords": [
+    "image-generation",
+    "gpt-image-2",
+    "sub2api",
+    "openai-compatible",
+    "local-gui"
+  ],
+  "scripts": {
+    "start": "npm run gui",
+    "gui": "node src/gui.js",
+    "cf:dev": "wrangler dev",
+    "cf:deploy": "wrangler deploy",
+    "cf:domain": "node scripts/configure-custom-domain.js",
+    "test": "node test/run-tests.js",
+    "check": "node test/run-tests.js"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}
